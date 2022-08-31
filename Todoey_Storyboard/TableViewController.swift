@@ -8,11 +8,39 @@
 import UIKit
 
 class TableViewController: UITableViewController {
-    let itemArray = ["Find Mike","Buy Eggos","Destory Demogorgon"]
+    var itemArray = ["Find Mike","Buy Eggos","Destory Demogorgon"]
+    
+    let defaults = UserDefaults.standard
+    var textField = UITextField()
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Todoey"
+        if let items  = defaults.array(forKey: "ToDoListArray") as? [String] {
+            itemArray = items
+        }
         // Do any additional setup after loading the view.
+    }
+    @IBAction func addItemBtnPressed(_ sender: Any) {
+        let alert = UIAlertController(title: "Add New Todo Item", message: " ", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add ", style: .default) { (action) in
+            
+            self.itemArray.append(self.textField.text!)
+            
+            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+            
+            self.tableView.reloadData()
+            
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "add new item"
+            self.textField = alertTextField
+            
+            
+        }
+       
+        alert.addAction(action)
+        present(alert,animated: true,completion: nil)
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
@@ -32,7 +60,7 @@ class TableViewController: UITableViewController {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         }
         tableView.deselectRow(at: indexPath, animated: true)
-        print(itemArray[indexPath.row])
+        
     }
 }
 

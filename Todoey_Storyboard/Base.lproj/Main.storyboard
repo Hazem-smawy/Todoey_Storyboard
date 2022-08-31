@@ -30,7 +30,15 @@
                             <outlet property="delegate" destination="IvW-NN-f4H" id="QvI-TP-voT"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="8PD-mr-4Q0"/>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="8PD-mr-4Q0" colorLabel="IBBuiltInLabel-Blue">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="9dt-FI-D49">
+                            <connections>
+                                <action selector="addItemBtnPressed:" destination="IvW-NN-f4H" id="8cy-o6-E2c"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K5A-IH-3wc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
