@@ -6,15 +6,19 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
+
 class CategoryTableViewController: UITableViewController {
+    
+    var realm = try! Realm()
+    
     var textField = UITextField()
-    var catArray = [Category]()
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var categoreis:Results<Category>?
+    //let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     override func viewDidLoad() {
         super.viewDidLoad()
         
-     loadData()
+        loadCategory()
     }
     //MAKE: - Add New Category
     @IBAction func addBtnPressed(_ sender: Any) {
@@ -24,10 +28,11 @@ class CategoryTableViewController: UITableViewController {
             self.textField = alertTextField
         }
         let action = UIAlertAction(title: "add", style: .default) { action in
-            let newCat = Category(context:self.context)
+            let newCat = Category()
+            
             newCat.name = self.textField.text!
-            self.catArray.append(newCat)
-            self.saveData()
+            
+            self.saveCategory(category:newCat)
         }
         alert.addAction(action)
         present(alert,animated: true,completion: nil)
@@ -38,11 +43,11 @@ class CategoryTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return catArray.count
+        return categoreis?.count ?? 1
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
-        cell.textLabel?.text = catArray[indexPath.row].name
+        cell.textLabel?.text = categoreis?[indexPath.row].name ?? "NO CATEGORY HERE"
         return cell
     }
     
@@ -54,23 +59,19 @@ class CategoryTableViewController: UITableViewController {
         let destinationVC = segue.destination as! TableViewController
         
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = catArray[indexPath.row]
+            destinationVC.selectedCategory = categoreis?[indexPath.row]
         }
     }
     
     //MARK: - mainublating data
-    func loadData(with request:NSFetchRequest<Category> = Category.fetchRequest()) {
-        
-      
-        do {
-            catArray = try context.fetch(request)
-        }catch {
-            print("there is error to retrive data from database")
-        }
+    func loadCategory() {
+         categoreis = realm.objects(Category.self)
     }
-    func saveData (){
+    func saveCategory (category:Category){
         do {
-            try context.save()
+            try realm.write({
+                realm.add(category)
+            })
             print("data stored in database")
         }catch {
             print("there is error when store data to database")
